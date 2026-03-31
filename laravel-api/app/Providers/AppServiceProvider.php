@@ -6,6 +6,11 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Eloquent\UserRepository;
 
+use App\Repositories\Eloquent\ProductRepository;
+use App\Repositories\Interfaces\ProductRepositoryInterface;
+
+
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -16,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             UserRepositoryInterface::class,
             UserRepository::class
+
+        );
+        $this->app->bind(
+            ProductRepositoryInterface::class,
+            ProductRepository::class
         );
     }
 
