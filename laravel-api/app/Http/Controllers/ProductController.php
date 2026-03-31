@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 
 use App\Services\ProductService;
 
 use App\DTOs\Product\ProductDTO;
+use App\DTOs\Product\UpdateProductDTO;
 
 use Illuminate\Http\Request;
 
@@ -55,9 +57,11 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(int $id, ProductService $productService)
     {
-        //
+        return new ProductResource(
+            $productService->findById($id)
+        );
     }
 
     /**
@@ -71,16 +75,32 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
-    {
-        //
+    public function update(
+        int $id,
+        UpdateProductRequest $request,
+        ProductService $productService
+    ) {
+
+        $dto = new UpdateProductDTO(
+            name: $request->name,
+            quantity: $request->quantity,
+            weight: $request->weight,
+            price: $request->price,
+        );
+
+        $product = $productService->update($id, $dto);
+
+        return new ProductResource($product);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(int $id, ProductService $productService)
     {
-        //
+        $productService->delete($id);
+        return response()->json([
+            'message' => 'Produto deletado com sucesso'
+        ]);
     }
 }
