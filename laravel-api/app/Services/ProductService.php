@@ -22,4 +22,8 @@ class ProductService
         
         return $product;
     }
+
+    public function paginate($perPage) {
+        return $this->productRepository->paginate($perPage);
+    }
 }

@@ -17,9 +17,13 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(ProductService $productService, Request $request)
     {
-        //
+        $perPage = $request->input('per_page', 10);
+        $perPage = max(1, min($perPage, 50));
+        return ProductResource::collection(
+            $productService->paginate($perPage)
+        );
     }
 
     /**
