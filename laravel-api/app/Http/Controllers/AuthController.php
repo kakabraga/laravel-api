@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Services\AuthService;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\DTOs\Auth\RegisterUserDTO;
+use App\DTOs\Auth\LoginUserDTO;
+use App\Http\Resources\AuthResource;
+
+class AuthController extends Controller
+{
+    public function register(RegisterRequest $request, AuthService $authService)
+    {
+        $UserDTO = new RegisterUserDTO(
+            name: $request->name,
+            email: $request->email,
+            password: $request->password,
+        );
+
+        return $authService->register($UserDTO);
+    }
+
+    public function login(LoginRequest $request, AuthService $authService)
+    {
+        $dto = new LoginUserDTO(
+            email: $request->email,
+            password: $request->password,
+        );
+
+        return new AuthResource(
+            $authService->login($dto)
+        );
+    }
+}
