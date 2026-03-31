@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\DTOs\Auth\RegisterUserDTO;
 use App\DTOs\Auth\LoginUserDTO;
 use App\Http\Resources\AuthResource;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -32,5 +33,13 @@ class AuthController extends Controller
         return new AuthResource(
             $authService->login($dto)
         );
+    }
+
+    public function logout(Request $request, AuthService $authService)
+    {
+        $authService->logout($request->user());
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
     }
 }
