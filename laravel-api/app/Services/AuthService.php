@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\Auth\RegisterUserDTO;
 use App\DTOs\Auth\LoginUserDTO;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
@@ -50,9 +51,5 @@ class AuthService
     {
         $user->currentAccessToken()->delete();
         return true;
-    }
-    public function me(User $user)
-    {
-
     }
 }
