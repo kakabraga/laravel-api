@@ -4,7 +4,6 @@ namespace App\Repositories\Eloquent;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\Product;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class ProductRepository implements ProductRepositoryInterface
 {

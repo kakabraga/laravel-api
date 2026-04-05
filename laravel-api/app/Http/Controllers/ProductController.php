@@ -31,10 +31,6 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(StoreProductRequest $request)
-    {
-
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -67,10 +63,6 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -99,8 +91,6 @@ class ProductController extends Controller
     public function destroy(int $id, ProductService $productService)
     {
         $productService->delete($id);
-        return response()->json([
-            'message' => 'Produto deletado com sucesso'
-        ]);
+        return response()->noContent();
     }
 }
