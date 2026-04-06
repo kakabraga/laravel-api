@@ -21,28 +21,20 @@ use App\Http\Resources\ProductResource;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     use AuthorizesRequests;
     public function index(ProductService $productService, Request $request)
     {
-        // $perPage = $request->input('per_page', 10);
-        // $perPage = max(1, min($perPage, 50));
         $userId = $request->user()->id;
-        return ProductResource::collection(
-            $productService->list($request->all(), $userId)
+
+        return ApiResponse::success(
+            ProductResource::collection(
+                $productService->list($request->all(), $userId)
+            )
         );
+
+
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-
-    /**
-     * Store a newly created resource in storage.
-     */
-
 
     public function store(StoreProductRequest $request, ProductService $productService)
     {
@@ -58,7 +50,8 @@ class ProductController extends Controller
             new ProductResource(
                 $productService->create($ProdutoDTO, $userId)
             ),
-            "The Product insert with success", 200
+            "The Product insert with success",
+            201
         );
     }
     /**
@@ -67,18 +60,8 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $this->authorize('view', $product);
-
         return ApiResponse::success(new ProductResource($product));
     }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(
         UpdateProductRequest $request,
         ProductService $productService,
@@ -96,7 +79,10 @@ class ProductController extends Controller
 
         $product = $productService->update($product->id, $dto);
 
-        return new ProductResource($product);
+        return ApiResponse::success(
+            new ProductResource($product),
+            "Updated"
+        );
     }
 
     /**

@@ -10,6 +10,7 @@ use App\DTOs\Auth\LoginUserDTO;
 use App\Http\Resources\AuthResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use App\Helpers\ApiResponse;
 
 class AuthController extends Controller
 {
@@ -21,7 +22,7 @@ class AuthController extends Controller
             password: $request->password,
         );
 
-        return $authService->register($UserDTO);
+        return ApiResponse::success($authService->register($UserDTO), "User successfully registered");
     }
 
     public function login(LoginRequest $request, AuthService $authService)
@@ -31,8 +32,11 @@ class AuthController extends Controller
             password: $request->password,
         );
 
-        return new AuthResource(
-            $authService->login($dto)
+        return ApiResponse::success(
+            new AuthResource(
+                $authService->login($dto)
+            ),
+            "Login successfully"
         );
     }
 
@@ -45,6 +49,8 @@ class AuthController extends Controller
     }
     public function me(Request $request)
     {
-        return new UserResource($request->user());
+        return ApiResponse::success(
+            new UserResource($request->user())
+        );
     }
 }
