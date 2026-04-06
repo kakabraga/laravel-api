@@ -13,6 +13,7 @@ class Product extends Model
         'quantity',
         'weight',
         'price',
+        'user_id'
     ];
 
 

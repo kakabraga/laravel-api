@@ -38,7 +38,7 @@ class ProductRepository implements ProductRepositoryInterface
         return $product->delete();
     }
 
-    public function paginateWithFilters(Array $filters, Int $perPage): LengthAwarePaginator
+    public function paginateWithFilters(Array $filters, Int $perPage, $userId): LengthAwarePaginator
     {
         return Product::query()
             ->when(!empty($filters['search']), function ($query) use ($filters) {
@@ -54,7 +54,7 @@ class ProductRepository implements ProductRepositoryInterface
             })
 
             ->orderBy($filters['sort'], $filters['order'])
-
+            ->where('user_id', $userId)
             ->paginate($perPage);
     }
 }

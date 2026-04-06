@@ -10,6 +10,10 @@ use App\Services\ProductService;
 use App\DTOs\Product\ProductDTO;
 use App\DTOs\Product\UpdateProductDTO;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+ 
+
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 use App\Http\Resources\ProductResource;
@@ -19,12 +23,14 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(ProductService $productService, StoreProductRequest $request)
+    use AuthorizesRequests;
+    public function index(ProductService $productService, Request $request)
     {
         // $perPage = $request->input('per_page', 10);
         // $perPage = max(1, min($perPage, 50));
+        $userId = $request->user()->id;
         return ProductResource::collection(
-            $productService->list($request->all())
+            $productService->list($request->all(), $userId)
         );
     }
 
@@ -45,20 +51,21 @@ class ProductController extends Controller
             weight: $request->weight,
             price: $request->price
         );
-
+        $userId = $request->user()->id;
         return new ProductResource(
-            $productService->create($ProdutoDTO)
+            $productService->create($ProdutoDTO, $userId)
         );
     }
     /**
      * Display the specified resource.
      */
-    public function show(int $id, ProductService $productService)
+    public function show(Product $product)
     {
-        return new ProductResource(
-            $productService->findById($id)
-        );
+        $this->authorize('view', $product);
+
+        return new ProductResource($product);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -68,10 +75,12 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        int $id,
         UpdateProductRequest $request,
-        ProductService $productService
+        ProductService $productService,
+        Product $product
     ) {
+
+        $this->authorize('update', $product);
 
         $dto = new UpdateProductDTO(
             name: $request->name,
@@ -80,7 +89,7 @@ class ProductController extends Controller
             price: $request->price,
         );
 
-        $product = $productService->update($id, $dto);
+        $product = $productService->update($product->id, $dto);
 
         return new ProductResource($product);
     }
@@ -88,9 +97,10 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id, ProductService $productService)
+    public function destroy(Product $product, ProductService $productService)
     {
-        $productService->delete($id);
+         $this->authorize('delete', $product);
+        $productService->delete($product->id);
         return response()->noContent();
     }
 }

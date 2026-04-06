@@ -17,13 +17,14 @@ class ProductService
     ) {
     }
 
-    public function create(ProductDTO $dados)
+    public function create(ProductDTO $dados, int $userId)
     {
         $product = $this->productRepository->create([
             'name' => $dados->name,
             'quantity' => $dados->quantity,
             'weight' => $dados->weight,
             'price' => $dados->price,
+            'user_id' => $userId
         ]);
 
         return $product;
@@ -34,7 +35,7 @@ class ProductService
         return $this->productRepository->paginate($perPage);
     }
 
-    public function list($filters)
+    public function list($filters, int $userId)
     {
         $perPage = $filters['per_page'] ?? 10;
 
@@ -56,7 +57,7 @@ class ProductService
         $filters['sort'] = $sort;
         $filters['order'] = $order;
 
-        return $this->productRepository->paginateWithFilters($filters, $perPage);
+        return $this->productRepository->paginateWithFilters($filters, $perPage, $userId);
     }
     public function findById(int $id_product): Product
     {
