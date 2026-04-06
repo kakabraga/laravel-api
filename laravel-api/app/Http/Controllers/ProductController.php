@@ -11,11 +11,12 @@ use App\DTOs\Product\ProductDTO;
 use App\DTOs\Product\UpdateProductDTO;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
- 
+
 
 use App\Models\Product;
 use Illuminate\Http\Request;
 
+use App\Helpers\ApiResponse;
 use App\Http\Resources\ProductResource;
 
 class ProductController extends Controller
@@ -52,8 +53,12 @@ class ProductController extends Controller
             price: $request->price
         );
         $userId = $request->user()->id;
-        return new ProductResource(
-            $productService->create($ProdutoDTO, $userId)
+
+        return ApiResponse::success(
+            new ProductResource(
+                $productService->create($ProdutoDTO, $userId)
+            ),
+            "The Product insert with success", 200
         );
     }
     /**
@@ -63,7 +68,7 @@ class ProductController extends Controller
     {
         $this->authorize('view', $product);
 
-        return new ProductResource($product);
+        return ApiResponse::success(new ProductResource($product));
     }
 
 
@@ -99,7 +104,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product, ProductService $productService)
     {
-         $this->authorize('delete', $product);
+        $this->authorize('delete', $product);
         $productService->delete($product->id);
         return response()->noContent();
     }
