@@ -34,6 +34,30 @@ class ProductService
         return $this->productRepository->paginate($perPage);
     }
 
+    public function list($filters)
+    {
+        $perPage = $filters['per_page'] ?? 10;
+
+        $perPage = max(1, min((int) $perPage, 50));
+
+        $sort = $filters['sort'] ?? 'created_at';
+        $order = $filters['order'] ?? 'desc';
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'desc';
+        }
+
+        $allowedSorts = ['name', 'price', 'quantity', 'created_at'];
+
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'created_at';
+        }
+
+        $filters['sort'] = $sort;
+        $filters['order'] = $order;
+
+        return $this->productRepository->paginateWithFilters($filters, $perPage);
+    }
     public function findById(int $id_product): Product
     {
         $product = $this->productRepository->findById($id_product);

@@ -37,4 +37,24 @@ class ProductRepository implements ProductRepositoryInterface
         $product = Product::findOrFail($id_product);
         return $product->delete();
     }
+
+    public function paginateWithFilters(Array $filters, Int $perPage): LengthAwarePaginator
+    {
+        return Product::query()
+            ->when(!empty($filters['search']), function ($query) use ($filters) {
+                $query->where('name', 'like', '%' . $filters['search'] . '%');
+            })
+
+            ->when(isset($filters['min_price']), function ($query) use ($filters) {
+                $query->where('price', '>=', $filters['min_price']);
+            })
+
+            ->when(isset($filters['max_price']), function ($query) use ($filters) {
+                $query->where('price', '<=', $filters['max_price']);
+            })
+
+            ->orderBy($filters['sort'], $filters['order'])
+
+            ->paginate($perPage);
+    }
 }

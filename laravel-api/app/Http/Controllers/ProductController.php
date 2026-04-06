@@ -19,12 +19,12 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(ProductService $productService, Request $request)
+    public function index(ProductService $productService, StoreProductRequest $request)
     {
-        $perPage = $request->input('per_page', 10);
-        $perPage = max(1, min($perPage, 50));
+        // $perPage = $request->input('per_page', 10);
+        // $perPage = max(1, min($perPage, 50));
         return ProductResource::collection(
-            $productService->paginate($perPage)
+            $productService->list($request->all())
         );
     }
 
