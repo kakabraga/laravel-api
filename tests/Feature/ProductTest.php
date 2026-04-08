@@ -14,12 +14,7 @@ class ProductTest extends TestCase
      */
 
     use RefreshDatabase;
-    public function test_example(): void
-    {
-        $response = $this->get('/');
 
-        $response->assertStatus(200);
-    }
 
     public function test_user_can_create_product()
     {
@@ -69,4 +64,110 @@ class ProductTest extends TestCase
         ]);
     }
 
+    public function test_user_cannot_update_other_user_product()
+    {
+        $user_creator = User::factory()->create();
+        $user_not_creator = User::factory()->create();
+
+        $product = Product::factory()->create([
+            'user_id' => $user_creator->id
+        ]);
+
+        $payload = [
+            'name' => 'Produto Alterado',
+            'quantity' => 99,
+            'weight' => 3.5,
+            'price' => 999.99
+        ];
+
+        $response = $this->actingAs($user_not_creator)
+            ->putJson("/api/products/{$product->id}", $payload);
+        $response->assertStatus(403);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'name' => $product->name
+        ]);
+    }
+
+    public function test_user_cannot_list_other_user_product()
+    {
+        $user_creator = User::factory()->create();
+        $user_not_creator = User::factory()->create();
+
+        Product::factory()->create([
+            'user_id' => $user_creator->id
+        ]);
+
+        $response = $this->actingAs($user_not_creator)
+            ->getJson("api/products");
+        $response->assertStatus(200);
+
+        $response->assertJsonCount(0, 'data');
+    }
+
+    public function test_user_can_create_own_product()
+    {
+        $user = User::factory()->create();
+        $payload = [
+            'name' => 'Produto Teste',
+            'quantity' => 99,
+            'weight' => 3.5,
+            'price' => 999.99
+        ];
+
+        $response = $this->actingAs($user)
+            ->postJson("api/products", $payload);
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('products', [
+            'name' => "Produto Teste",
+            'user_id' => $user->id
+        ]);
+    }
+
+    public function test_user_can_delete_own_product()
+    {
+        $user = User::factory()->create();
+
+        $product = Product::factory()->create([
+            'user_id' => $user->id
+        ]);
+        $response = $this->actingAs($user)
+            ->deleteJson("api/products/{$product->id}");
+        $response->assertStatus(204);
+
+        $this->assertDatabaseMissing('products', ['id' => $product->id]);
+    }
+
+    public function test_user_can_update_own_product()
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create([
+            'user_id' => $user->id,
+            'name' => "Produto Corinthinas"
+        ]);
+
+        $payload = [
+            'name' => 'Produto Teste',
+            'quantity' => 99,
+            'weight' => 3.5,
+            'price' => 999.99
+        ];
+
+        $response = $this->actingAs($user)
+            ->putJson("api/products/{$product->id}", $payload);
+        $response->assertOk();
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'name' => "Produto Teste"
+        ]);
+
+        $this->assertDatabaseMissing('products', [
+            'id' => $product->id,
+            'name' => "Produto Corinthinas"
+        ]);
+
+    }
 }
