@@ -40,8 +40,7 @@ app/ ├── Http/ │ ├── Controllers/ │ ├── Middleware/ │ �
 
 ### 1. Clonar o repositório
 
-git clone https://github.com/kakabraga/laravel-api.git cd laravel-api
-
+git clone https://github.com/kakabraga/laravel-api.git 
 ------------------------------------------------------------------------
 
 ### 2. Instalar dependências
