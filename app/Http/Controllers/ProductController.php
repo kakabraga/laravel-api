@@ -7,7 +7,7 @@ use App\Http\Requests\Product\UpdateProductRequest;
 
 use App\Services\ProductService;
 
-use App\DTOs\Product\ProductDTO;
+use App\Domain\Product\DTOs\ProductDTO; 
 use App\DTOs\Product\UpdateProductDTO;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -38,30 +38,31 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request, ProductService $productService)
     {
-        $ProdutoDTO = new ProductDTO(
+        $produtoDTO = new ProductDTO(
             name: $request->name,
             quantity: $request->quantity,
             weight: $request->weight,
             price: $request->price
         );
-        $userId = $request->user()->id;
 
         return ApiResponse::success(
             new ProductResource(
-                $productService->create($ProdutoDTO, $userId)
+                $productService->create($produtoDTO,$request->user())
             ),
-            "The Product insert with success",
+            "Product created successfully.",
             201
         );
     }
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(int $product, ProductService $productService)
     {
         $this->authorize('view', $product);
-        return ApiResponse::success(new ProductResource($product));
+        return ApiResponse::success($product);
     }
+
+
     public function update(
         UpdateProductRequest $request,
         ProductService $productService,
@@ -77,7 +78,7 @@ class ProductController extends Controller
             price: $request->price,
         );
 
-        $product = $productService->update($product->id, $dto);
+        $product = $productService->update($product, $dto);
 
         return ApiResponse::success(
             new ProductResource($product),
@@ -91,7 +92,9 @@ class ProductController extends Controller
     public function destroy(Product $product, ProductService $productService)
     {
         $this->authorize('delete', $product);
-        $productService->delete($product->id);
+
+        $productService->delete($product);
+
         return response()->noContent();
     }
 }
