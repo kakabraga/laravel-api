@@ -19,11 +19,9 @@ class ProductRepository implements ProductRepositoryInterface
             ->paginate($perPage);
 
     }
-    public function findById(int $id_product): Product
+    public function findById(int $id_product): ?Product
     {
-
-        return Product::findOrFail($id_product);
-
+        return Product::find($id_product);
     }
 
     public function update(Product $product, array $data): Product
@@ -32,9 +30,9 @@ class ProductRepository implements ProductRepositoryInterface
         return $product;
     }
 
-    public function delete(int $id_product): bool
+    public function delete(Product $product): bool
     {
-        $product = Product::findOrFail($id_product);
+        $product = Product::find($product->id);
         return $product->delete();
     }
 
