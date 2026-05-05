@@ -170,4 +170,6 @@ class ProductTest extends TestCase
         ]);
 
     }
+
+    public function teste_
 }
