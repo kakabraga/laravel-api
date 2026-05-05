@@ -9,6 +9,7 @@ class ProductDTO
         public readonly int $quantity,
         public readonly float $weight,
         public readonly float $price,
+        public readonly string $created_at,
     ) {
     }
 }

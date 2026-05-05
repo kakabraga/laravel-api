@@ -11,4 +11,14 @@ class ProductDTO
         public readonly float $price,
     ) {
     }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            name: $data['name'],
+            quantity: $data['quantity'],
+            weight: $data['weight'],
+            price: $data['price'],
+        );
+    }
 }

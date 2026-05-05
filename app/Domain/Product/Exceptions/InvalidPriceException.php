@@ -3,8 +3,8 @@ namespace App\Domain\Product\Exceptions;
 
 class InvalidPriceException extends ProductException
 {
-    public function __construct()
+    public function __construct(string $message = "Invalid price.")
     {
-        parent::__construct("Invalid price.", 422);
+        parent::__construct($message, 422);
     }
 }

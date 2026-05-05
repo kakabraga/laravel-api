@@ -1,9 +1,6 @@
 <?php
 namespace App\Domain\Product\Exceptions;
 
-use App\Exceptions\Product\ProductException;
-
-
 class QuantityLimitExceededException extends ProductException
 {
     public function __construct()

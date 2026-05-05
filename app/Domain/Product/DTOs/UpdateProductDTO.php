@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Product;
+namespace App\Domain\Product\DTOs;
 
 class UpdateProductDTO
 {
@@ -10,5 +10,15 @@ class UpdateProductDTO
         public readonly ?float $weight,
         public readonly ?float $price,
     ) {
+    }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            name: $data['name'] ?? null,
+            quantity: $data['quantity'] ?? null,
+            weight: $data['weight'] ?? null,
+            price: $data['price'] ?? null,
+        );
     }
 }
