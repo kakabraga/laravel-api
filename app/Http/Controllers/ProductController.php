@@ -7,9 +7,8 @@ use App\Http\Requests\Product\UpdateProductRequest;
 
 use App\Services\ProductService;
 
-use App\Domain\Product\DTOs\ProductDTO; 
-use App\DTOs\Product\UpdateProductDTO;
-
+use App\Domain\Product\DTOs\UpdateProductDTO;
+use App\Domain\Product\DTOs\ProductDTO;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
@@ -38,16 +37,11 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request, ProductService $productService)
     {
-        $produtoDTO = new ProductDTO(
-            name: $request->name,
-            quantity: $request->quantity,
-            weight: $request->weight,
-            price: $request->price
-        );
+        $produtDTO = ProductDTO::fromArray($request->validated());
 
         return ApiResponse::success(
             new ProductResource(
-                $productService->create($produtoDTO,$request->user())
+                $productService->create($produtDTO, $request->user())
             ),
             "Product created successfully.",
             201
@@ -70,15 +64,10 @@ class ProductController extends Controller
     ) {
 
         $this->authorize('update', $product);
+        
+        $produtDTO = UpdateProductDTO::fromArray($request->validated());
 
-        $dto = new UpdateProductDTO(
-            name: $request->name,
-            quantity: $request->quantity,
-            weight: $request->weight,
-            price: $request->price,
-        );
-
-        $product = $productService->update($product, $dto);
+        $product = $productService->update($product, $produtDTO);
 
         return ApiResponse::success(
             new ProductResource($product),

@@ -32,7 +32,6 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function delete(Product $product): bool
     {
-        $product = Product::find($product->id);
         return $product->delete();
     }
 
@@ -55,4 +54,5 @@ class ProductRepository implements ProductRepositoryInterface
             ->where('user_id', $userId)
             ->paginate($perPage);
     }
+
 }

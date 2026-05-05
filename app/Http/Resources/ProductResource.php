@@ -20,6 +20,7 @@ class ProductResource extends JsonResource
             'quantity' => $this->quantity,
             'weight' => $this->weight,
             'price' => $this->price,
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s')
         ];
     }
 }

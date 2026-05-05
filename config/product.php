@@ -9,7 +9,7 @@ return [
     */
 
     'limits' => [
-        'max_products_per_user' => 100,
+        'max_products_per_user' => 1000,
     ],
 
     /*
@@ -20,7 +20,7 @@ return [
 
     'price' => [
         'min' => 1,
-        'max' => 10000,
+        'max' => 10,
     ],
 
 ];

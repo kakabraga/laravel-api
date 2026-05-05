@@ -2,17 +2,15 @@
 
 namespace App\Services;
 
-use App\Exceptions\BusinessException;
-use App\Exceptions\Product\QuantityLimitExceededException;
-use App\Exceptions\Product\ProductLimitExceededException;
-use App\Exceptions\Product\PriceLimitExceededException;
-use App\Models\User;
-
+use Illuminate\Pipeline\Pipeline;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
-use App\Domain\Product\Validators\CreateProductValidator;
+use App\Domain\Product\Contexts\ProductCreationContext;
+use App\Domain\Product\Rules\ValidatePriceRule;
+use App\Domain\Product\Rules\ValidateQuantityRule;
 use App\Domain\Product\DTOs\ProductDTO;
-use App\DTOs\Product\UpdateProductDTO;
+use App\Domain\Product\DTOs\UpdateProductDTO;
 use App\Models\Product;
+use App\Models\User;
 
 
 class ProductService
@@ -20,14 +18,14 @@ class ProductService
 
     public function __construct(
         private ProductRepositoryInterface $productRepository,
-        private CreateProductValidator $createProductValidator,
+        private Pipeline $pipeline
     ) {
     }
 
-    public function create(ProductDTO $dados, User $user)
+    public function create(ProductDTO $dados, User $user) : Product
     {
 
-        $this->createProductValidator->validate($dados, $user);
+        $this->runCreatePipelne($dados, $user);
 
         $product = $this->productRepository->create([
             'name' => $dados->name,
@@ -43,6 +41,37 @@ class ProductService
     public function paginate(int $perPage)
     {
         return $this->productRepository->paginate($perPage);
+    }
+
+    public function update(Product $product, UpdateProductDTO $data) : Product
+    {
+
+        return $this->productRepository->update(
+            $product,
+            array_filter([
+                'name' => $data->name,
+                'quantity' => $data->quantity,
+                'weight' => $data->weight,
+                'price' => $data->price,
+            ], fn($value) => !is_null($value))
+        );
+    }
+
+    public function delete(Product $product)
+    {
+        return $this->productRepository->delete($product);
+    }
+
+    private function runCreatePipelne(ProductDTO $data, User $user): void
+    {
+        $this->pipeline
+            ->send(new ProductCreationContext($data, $user))
+            ->through([
+                ValidatePriceRule::class,
+                ValidateQuantityRule::class,
+                // ValidateUserProductLimitRule::class,
+            ])
+            ->thenReturn();
     }
 
     public function list($filters, int $userId)
@@ -69,25 +98,4 @@ class ProductService
 
         return $this->productRepository->paginateWithFilters($filters, $perPage, $userId);
     }
-
-
-    public function update(Product $product, UpdateProductDTO $data)
-    {
-
-        return $this->productRepository->update(
-            $product,
-            array_filter([
-                'name' => $data->name,
-                'quantity' => $data->quantity,
-                'weight' => $data->weight,
-                'price' => $data->price,
-            ], fn($value) => !is_null($value))
-        );
-    }
-
-    public function delete(Product $product)
-    {
-        return $this->productRepository->delete($product);
-    }
-
 }
