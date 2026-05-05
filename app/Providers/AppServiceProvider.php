@@ -7,7 +7,9 @@ use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Eloquent\UserRepository;
 
 use App\Repositories\Eloquent\ProductRepository;
+use App\Repositories\Eloquent\CustomerRepository;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
+use App\Repositories\Interfaces\CustomerRepositoryInterface;
 
 
 
@@ -26,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ProductRepositoryInterface::class,
             ProductRepository::class
+        );
+
+        $this->app->bind(
+            CustomerRepositoryInterface::class,
+            CustomerRepository::class
         );
     }
 
