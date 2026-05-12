@@ -22,7 +22,7 @@ A API pode ser utilizada como base para aplicações web ou mobile.
 ## 🛠️ Tecnologias utilizadas
 
 -   PHP 8+
--   Laravel 11
+-   Laravel 12
 -   MySQL
 -   Laravel Sanctum (autenticação)
 -   Composer
