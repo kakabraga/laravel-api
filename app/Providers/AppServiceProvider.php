@@ -8,9 +8,11 @@ use App\Repositories\Eloquent\UserRepository;
 
 use App\Repositories\Eloquent\ProductRepository;
 use App\Repositories\Eloquent\CustomerRepository;
+use App\Repositories\Eloquent\AuditLogRepository;
+
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use App\Repositories\Interfaces\CustomerRepositoryInterface;
-
+use App\Repositories\Interfaces\AuditLogsRepositoryInterface;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
             UserRepository::class
 
         );
+
         $this->app->bind(
             ProductRepositoryInterface::class,
             ProductRepository::class
@@ -33,6 +36,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             CustomerRepositoryInterface::class,
             CustomerRepository::class
+        );
+
+        $this->app->bind(
+            CustomerRepositoryInterface::class,
+            CustomerRepository::class
+        );
+
+        $this->app->bind(
+            AuditLogsRepositoryInterface::class,
+            AuditLogRepository::class
         );
     }
 
