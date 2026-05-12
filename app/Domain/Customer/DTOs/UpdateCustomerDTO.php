@@ -7,6 +7,7 @@ class UpdateCustomerDTO
     public function __construct(
         public readonly ?string $name,
         public readonly ?string $email,
+        public readonly ?string $status,
         public readonly ?string $document,
         public readonly ?string $type,
         public readonly ?string $phone,
@@ -22,6 +23,7 @@ class UpdateCustomerDTO
         return new self(
             name: $data['name'] ?? null,
             email: $data['email'] ?? null,
+            status: $data['status'] ?? null,
             document: isset($data['document'])
             ? self::sanitizeDocument($data['document'])
             : null,

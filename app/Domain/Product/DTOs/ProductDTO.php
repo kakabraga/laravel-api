@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Domain\Product\DTOs;
-
+use App\Models\User;
 class ProductDTO
 {
     public function __construct(
@@ -20,5 +20,15 @@ class ProductDTO
             weight: $data['weight'],
             price: $data['price'],
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'quantity' => $this->quantity,
+            'weight' => $this->weight,
+            'price' => $this->price,
+        ];
     }
 }

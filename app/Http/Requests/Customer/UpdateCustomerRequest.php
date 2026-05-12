@@ -30,6 +30,7 @@ class UpdateCustomerRequest extends FormRequest
             'city' => ['sometimes', 'string', 'max:100'],
             'state' => ['sometimes', 'string', 'size:2'],
             'zip_code' => ['sometimes', 'string', 'max:10'],
+            'status' => ['sometimes', 'string', 'max:20'],
         ];
     }
 

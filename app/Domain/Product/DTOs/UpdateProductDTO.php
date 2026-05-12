@@ -21,4 +21,15 @@ class UpdateProductDTO
             price: $data['price'] ?? null,
         );
     }
+
+    // UpdateProductDTO.php
+    public function toArray(): array
+    {
+        return array_filter([
+            'name' => $this->name,
+            'quantity' => $this->quantity,
+            'weight' => $this->weight,
+            'price' => $this->price,
+        ], fn($value) => !is_null($value));
+    }
 }

@@ -22,7 +22,7 @@ class CustomerFilterDTO
             $order = 'desc';
         }
 
-        $allowedSorts = ['name', 'email', 'city', 'state', 'type', 'created_at'];
+        $allowedSorts = self::allowedSorts();
 
         if (!in_array($sort, $allowedSorts)) {
             $sort = 'created_at';
@@ -33,5 +33,17 @@ class CustomerFilterDTO
             order: $order,
             sort: $sort
         );
+    }
+
+    private static function allowedSorts(): array
+    {
+        return [
+            'created_at',
+            'name',
+            'city',
+            'state',
+            'type',
+            'updated_at'
+        ];
     }
 }

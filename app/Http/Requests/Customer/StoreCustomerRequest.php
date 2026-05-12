@@ -21,7 +21,7 @@ class StoreCustomerRequest extends FormRequest
             'name'     => ['required', 'string', 'max:100'],
             'email'    => ['required', 'email', 'unique:customers,email'],
             'document' => ['required', 'string', 'unique:customers,document'],
-            'type'     => ['required', 'in:cpf,cnpj'],
+            'type'     => ['required', 'in:cpf,cnpj', 'max:14'],
             'phone'    => ['required', 'string', 'max:15'],
             'address'  => ['required', 'string', 'max:255'],
             'city'     => ['required', 'string', 'max:100'],

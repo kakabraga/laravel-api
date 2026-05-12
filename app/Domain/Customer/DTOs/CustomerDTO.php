@@ -2,6 +2,8 @@
 
 namespace App\Domain\Customer\DTOs;
 
+use App\Models\User;
+use App\Http\Requests\Customer\StoreCustomerRequest;
 class CustomerDTO
 {
     public function __construct(
@@ -29,6 +31,33 @@ class CustomerDTO
             state: $data['state'],
             zip_code: self::sanitizeZipCode($data['zip_code']),
         );
+    }
+
+    // CustomerDTO.php
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'document' => $this->document,
+            'type' => $this->type,
+            'phone' => $this->phone,
+            'address' => $this->address,
+            'city' => $this->city,
+            'state' => $this->state,
+            'zip_code' => $this->zip_code,
+        ];
+    }
+
+    public function toCreateAuditArray(): array
+    {
+
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'type' => $this->type
+        ];
+
     }
 
     private static function sanitizeDocument(string $document): string
