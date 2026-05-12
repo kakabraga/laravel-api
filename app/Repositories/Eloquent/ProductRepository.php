@@ -2,8 +2,10 @@
 
 namespace App\Repositories\Eloquent;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
+use App\Domain\Product\DTOs\ProductFilterDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\Product;
+use App\Models\User;
 
 class ProductRepository implements ProductRepositoryInterface
 {
@@ -35,24 +37,12 @@ class ProductRepository implements ProductRepositoryInterface
         return $product->delete();
     }
 
-    public function paginateWithFilters(Array $filters, Int $perPage, $userId): LengthAwarePaginator
+    public function paginateWithFilters(ProductFilterDTO $filters, User $user): LengthAwarePaginator
     {
         return Product::query()
-            ->when(!empty($filters['search']), function ($query) use ($filters) {
-                $query->where('name', 'like', '%' . $filters['search'] . '%');
-            })
-
-            ->when(isset($filters['min_price']), function ($query) use ($filters) {
-                $query->where('price', '>=', $filters['min_price']);
-            })
-
-            ->when(isset($filters['max_price']), function ($query) use ($filters) {
-                $query->where('price', '<=', $filters['max_price']);
-            })
-
-            ->orderBy($filters['sort'], $filters['order'])
-            ->where('user_id', $userId)
-            ->paginate($perPage);
+            ->where('user_id', $user->id)
+            ->orderBy($filters->sort, $filters->order)
+            ->paginate($filters->perPage);
     }
 
 }

@@ -4,11 +4,13 @@ namespace App\Services;
 
 use Illuminate\Pipeline\Pipeline;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
-use App\Domain\Product\Contexts\ProductCreationContext;
+use App\Domain\Product\Contexts\ProductContext;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Domain\Product\Rules\ValidatePriceRule;
 use App\Domain\Product\Rules\ValidateQuantityRule;
 use App\Domain\Product\DTOs\ProductDTO;
 use App\Domain\Product\DTOs\UpdateProductDTO;
+use App\Domain\Product\DTOs\ProductFilterDTO;
 use App\Models\Product;
 use App\Models\User;
 
@@ -22,80 +24,42 @@ class ProductService
     ) {
     }
 
-    public function create(ProductDTO $dados, User $user) : Product
+    public function create(ProductDTO $data, User $user): Product
     {
-
-        $this->runCreatePipelne($dados, $user);
-
-        $product = $this->productRepository->create([
-            'name' => $dados->name,
-            'quantity' => $dados->quantity,
-            'weight' => $dados->weight,
-            'price' => $dados->price,
-            'user_id' => $user->id
-        ]);
-
-        return $product;
+        $this->runPipeline($data, $user);
+        return $this->productRepository->create([...$data->toArray(), 'user_id' => $user->id]);
     }
 
-    public function paginate(int $perPage)
+    public function update(Product $product, UpdateProductDTO $updateProductDTO, User $user): Product
     {
-        return $this->productRepository->paginate($perPage);
+        $this->runPipeline($updateProductDTO, $user);
+        return $this->productRepository->update($product, $updateProductDTO->toArray());
     }
 
-    public function update(Product $product, UpdateProductDTO $data) : Product
-    {
-
-        return $this->productRepository->update(
-            $product,
-            array_filter([
-                'name' => $data->name,
-                'quantity' => $data->quantity,
-                'weight' => $data->weight,
-                'price' => $data->price,
-            ], fn($value) => !is_null($value))
-        );
-    }
-
-    public function delete(Product $product)
+    public function delete(Product $product): bool
     {
         return $this->productRepository->delete($product);
     }
 
-    private function runCreatePipelne(ProductDTO $data, User $user): void
-    {
+    private function runPipeline(
+        ProductDTO|UpdateProductDTO $data,
+        User $user,
+        ?Product $product = null
+    ): void {
         $this->pipeline
-            ->send(new ProductCreationContext($data, $user))
+            ->send(new ProductContext($product, $data, $user))
             ->through([
                 ValidatePriceRule::class,
                 ValidateQuantityRule::class,
-                // ValidateUserProductLimitRule::class,
             ])
             ->thenReturn();
     }
 
-    public function list($filters, int $userId)
+    public function list(array $filters, User $user): LengthAwarePaginator
     {
-        $perPage = $filters['per_page'] ?? 10;
-
-        $perPage = max(1, min((int) $perPage, 50));
-
-        $sort = $filters['sort'] ?? 'created_at';
-        $order = $filters['order'] ?? 'desc';
-
-        if (!in_array($order, ['asc', 'desc'])) {
-            $order = 'desc';
-        }
-
-        $allowedSorts = ['name', 'price', 'quantity', 'created_at'];
-
-        if (!in_array($sort, $allowedSorts)) {
-            $sort = 'created_at';
-        }
-
-        $filters['sort'] = $sort;
-        $filters['order'] = $order;
-
-        return $this->productRepository->paginateWithFilters($filters, $perPage, $userId);
+        return $this->productRepository->paginateWithFilters(
+            ProductFilterDTO::fromArray($filters),
+            $user
+        );
     }
 }

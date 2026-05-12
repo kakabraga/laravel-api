@@ -3,13 +3,14 @@
 namespace App\Repositories\Interfaces;
 
 use App\Models\Product;
+use App\Models\User;
+use App\Domain\Product\DTOs\ProductFilterDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ProductRepositoryInterface
 {
     public function create(array $data): Product;
-    public function paginate(int $perPage): LengthAwarePaginator;
     public function update(Product $product, array $data): Product;
-    public function paginateWithFilters(Array $filters, int $perPage, int $userId): LengthAwarePaginator;
+    public function paginateWithFilters(ProductFilterDTO $filters, User $user): LengthAwarePaginator;
     public function delete(Product  $product): bool;
 }

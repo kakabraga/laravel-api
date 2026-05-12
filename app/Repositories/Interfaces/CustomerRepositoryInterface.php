@@ -10,8 +10,9 @@ interface CustomerRepositoryInterface
 {
 
     public function create(array $data): Customer;
-    public function delete(Customer $customer): bool;
+    public function delete(Customer $customer): void;
     public function update(Customer $customer, array $data) : Customer;
-    public function paginateWithFilters(CustomerFilterDTO $filters, int $perPage) : LengthAwarePaginator;
+    public function updateStatus(Customer $customer, UpdateCustomerDTO $data): Customer;
+   public function paginateWithFilters(CustomerFilterDTO $filters): LengthAwarePaginator;
 
 }

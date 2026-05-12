@@ -1,10 +1,12 @@
 <?php
 namespace App\Repositories\Eloquent;
 
+use App\Domain\Customer\DTOs\UpdateCustomerDTO;
 use App\Repositories\Interfaces\CustomerRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Domain\Customer\DTOs\CustomerFilterDTO;
 use App\Models\Customer;
+use App\Enums\CustomerStatus;
 
 class CustomerRepository implements CustomerRepositoryInterface
 {
@@ -13,7 +15,7 @@ class CustomerRepository implements CustomerRepositoryInterface
     {
         return Customer::create($dados);
     }
-    public function delete(Customer $customer): bool
+    public function delete(Customer $customer): void
     {
         return $customer->delete();
     }
@@ -24,9 +26,18 @@ class CustomerRepository implements CustomerRepositoryInterface
         return $customer;
     }
 
-    public function paginateWithFilters(CustomerFilterDTO $filters, int $perPage): LengthAwarePaginator
+    public function paginateWithFilters(CustomerFilterDTO $filters): LengthAwarePaginator
     {
         return Customer::orderBy($filters->sort, $filters->order)
-            ->paginate($perPage);
+            ->paginate($filters->perPage);
     }
+
+    public function updateStatus(Customer $customer, UpdateCustomerDTO $data): Customer
+    {
+        $customer->status = $data->status;
+        $customer->save();
+
+        return $customer;
+    }
+
 }
