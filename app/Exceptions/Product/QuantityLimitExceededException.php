@@ -8,6 +8,6 @@ class QuantityLimitExceededException extends ProductException
 {
     public function __construct()
     {
-        parent::__construct('The maximum quantity per insertion is 1000 units.', 422);
+        parent::__construct('The maximum quantity per inserdddtion is 1000 units.', 422);
     }
 }

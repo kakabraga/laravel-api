@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Domain\Product\Exceptions\ProductException;
+use App\Domain\Customer\Exceptions\CustomerException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -24,6 +25,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
 
         $exceptions->render(function (ProductException $e, $request) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data' => null
+            ], $e->getStatusCode());
+        });
+        $exceptions->render(function (CustomerException $e, $request) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),

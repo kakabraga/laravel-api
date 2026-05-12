@@ -43,56 +43,56 @@ class Handler extends ExceptionHandler
     /**
      * Register the exception handling callbacks for the application.
      */
-    public function register(): void
-    {
-        // 422 - Erro de validação
-        $this->renderable(function (ValidationException $e, $request) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Dados inválidos',
-                'errors' => $e->errors(),
-            ], 422);
-        });
+    // public function register(): void
+    // {
+    //     // 422 - Erro de validação
+    //     $this->renderable(function (ValidationException $e, $request) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Dados inválidos',
+    //             'errors' => $e->errors(),
+    //         ], 422);
+    //     });
 
-        // 401 - Não autenticado
-        $this->renderable(function (AuthenticationException $e, $request) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Não autenticado',
-            ], 401);
-        });
+    //     // 401 - Não autenticado
+    //     $this->renderable(function (AuthenticationException $e, $request) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Não autenticado',
+    //         ], 401);
+    //     });
 
-        // 400 - Regra de negócio
-        $this->renderable(function (BusinessException $e, $request) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], $e->getStatusCode());
-        });
+    //     // 400 - Regra de negócio
+    //     $this->renderable(function (BusinessException $e, $request) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $e->getMessage(),
+    //         ], $e->getStatusCode());
+    //     });
 
-        // 403, 404 e outros erros HTTP
-        $this->renderable(function (HttpExceptionInterface $e, $request) {
+    //     // 403, 404 e outros erros HTTP
+    //     $this->renderable(function (HttpExceptionInterface $e, $request) {
 
-            $message = $e->getMessage() ?: match ($e->getStatusCode()) {
-                403 => 'Acesso não autorizado',
-                404 => 'Recurso não encontrado',
-                default => 'Erro na requisição'
-            };
+    //         $message = $e->getMessage() ?: match ($e->getStatusCode()) {
+    //             403 => 'Acesso não autorizado',
+    //             404 => 'Recurso não encontrado',
+    //             default => 'Erro na requisição'
+    //         };
 
-            return response()->json([
-                'success' => false,
-                'message' => $message,
-            ], $e->getStatusCode());
-        });
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $message,
+    //         ], $e->getStatusCode());
+    //     });
 
-        // 500 - Erro inesperado
-        $this->renderable(function (Throwable $e, $request) {
-            return response()->json([
-                'success' => false,
-                'message' => app()->isProduction()
-                    ? 'Erro interno no servidor'
-                    : $e->getMessage(),
-            ], 500);
-        });
-    }
+    //     // 500 - Erro inesperado
+    //     $this->renderable(function (Throwable $e, $request) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => app()->isProduction()
+    //                 ? 'Erro interno no servidor'
+    //                 : $e->getMessage(),
+    //         ], 500);
+    //     });
+    // }
 }
