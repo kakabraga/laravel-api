@@ -24,24 +24,22 @@ class ProductController extends Controller
     use AuthorizesRequests;
     public function index(ProductService $productService, Request $request)
     {
-        $userId = $request->user()->id;
-
+        $this->authorize('viewAny', Product::class);
+        $user = $request->user();
         return ApiResponse::success(
             ProductResource::collection(
-                $productService->list($request->all(), $userId)
+                $productService->list($request->all(), $user)
             )
         );
-
-
     }
 
     public function store(StoreProductRequest $request, ProductService $productService)
     {
-        $produtDTO = ProductDTO::fromArray($request->validated());
+        $productDTO = ProductDTO::fromArray($request->validated());
 
         return ApiResponse::success(
             new ProductResource(
-                $productService->create($produtDTO, $request->user())
+                $productService->create($productDTO, $request->user())
             ),
             "Product created successfully.",
             201
@@ -50,10 +48,12 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $product, ProductService $productService)
+    public function show(Product $product)
     {
         $this->authorize('view', $product);
-        return ApiResponse::success($product);
+        return ApiResponse::success(
+            new ProductResource($product)
+        );
     }
 
 
@@ -64,14 +64,13 @@ class ProductController extends Controller
     ) {
 
         $this->authorize('update', $product);
-        
         $produtDTO = UpdateProductDTO::fromArray($request->validated());
-
-        $product = $productService->update($product, $produtDTO);
+        $user = $request->user();
+        $product = $productService->update($product, $produtDTO, $user);
 
         return ApiResponse::success(
             new ProductResource($product),
-            "Updated"
+            "Product Updated successfully."
         );
     }
 

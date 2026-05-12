@@ -37,7 +37,9 @@ class CustomerController extends Controller
         return ApiResponse::success(
             new CustomerResource(
                 $customerService->create($dto)
-            )
+            ),
+            "Customer created successfully.",
+            201
         );
     }
 
@@ -61,7 +63,19 @@ class CustomerController extends Controller
         return ApiResponse::success(
             new CustomerResource(
                 $customerService->update($customer, $dto)
-            )
+            ),
+            "Customer updated successfully.",
+        );
+    }
+
+    public function updateStatus(UpdateCustomerRequest $request, Customer $customer, CustomerService $customerService)
+    {
+        $dto = UpdateCustomerDTO::fromArray($request->validated());
+        return ApiResponse::success(
+            new CustomerResource(
+                $customerService->updateStatus($customer, $dto)
+            ),
+            "Customer updated successfully.",
         );
     }
 
