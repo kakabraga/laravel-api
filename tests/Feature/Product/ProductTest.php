@@ -32,7 +32,7 @@ class ProductTest extends TestCase
 
         $response->assertJson([
             'success' => true,
-            'message' => 'The Product insert with success'
+            'message' => 'Product created successfully.'
         ]);
 
         $this->assertDatabaseHas('products', [
@@ -171,5 +171,4 @@ class ProductTest extends TestCase
 
     }
 
-    public function teste_
 }

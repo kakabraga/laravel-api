@@ -41,11 +41,8 @@ class ProductService
         return $this->productRepository->delete($product);
     }
 
-    private function runPipeline(
-        ProductDTO|UpdateProductDTO $data,
-        User $user,
-        ?Product $product = null
-    ): void {
+    private function runPipeline(ProductDTO|UpdateProductDTO $data, User $user, ?Product $product = null): void
+    {
         $this->pipeline
             ->send(new ProductContext($product, $data, $user))
             ->through([

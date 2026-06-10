@@ -17,7 +17,7 @@ class CustomerRepository implements CustomerRepositoryInterface
     }
     public function delete(Customer $customer): void
     {
-        return $customer->delete();
+        $customer->delete();
     }
 
     public function update(Customer $customer, array $data): Customer
